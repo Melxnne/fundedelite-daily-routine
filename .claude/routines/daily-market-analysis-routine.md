@@ -163,31 +163,31 @@ als nächster Eintrag aufgenommen, sobald ein Vorschlag ≥2x erscheint.
 
 ---
 
-## 4. Commit und Push (Windows PowerShell)
+## 4. Commit und Push
 
-```powershell
+```bash
 # Report committen (falls noch nicht committed)
 git add reports/report_<YYYY-MM-DD>.md
 git commit -m "report: daily market analysis <YYYY-MM-DD>"
 
-# Push via Helper-Script (liest GITHUB_TOKEN aus .env)
-.\push_report.ps1 -Date <YYYY-MM-DD>
+# Push mit GITHUB_TOKEN (in Cloud-Env-Vars gesetzt, lokal in .env)
+BRANCH="claude/report-<YYYY-MM-DD>"
+git remote set-url origin "https://${GITHUB_TOKEN}@github.com/Melxnne/fundedelite-daily-routine.git"
+git checkout -b "$BRANCH" 2>/dev/null || git checkout "$BRANCH"
+git push -u origin "$BRANCH"
+# Remote wieder sauber setzen (Token raus aus der URL)
+git remote set-url origin "https://github.com/Melxnne/fundedelite-daily-routine.git"
+echo "PR: https://github.com/Melxnne/fundedelite-daily-routine/compare/$BRANCH"
 ```
 
-Das Script `push_report.ps1`:
-- Liest `GITHUB_TOKEN` aus `.env`
-- Erstellt Branch `claude/report-<YYYY-MM-DD>` und pusht
-- Gibt den PR-Link direkt aus
-- Setzt den Remote nach dem Push wieder auf die öffentliche HTTPS-URL zurück
+**Lokal (Windows):** statt obigem Bash-Block das Script verwenden:
+```powershell
+.\push_report.ps1 -Date <YYYY-MM-DD>
+```
 
 Falls Push fehlschlägt (kein oder ungültiger GITHUB_TOKEN):
 - Im Report unter Sektion 0 dokumentieren
 - Commit bleibt lokal erhalten
-
-GITHUB_TOKEN einrichten (einmalig):
-1. https://github.com/settings/tokens → "Generate new token (classic)"
-2. Scope: `repo`
-3. In `.env` eintragen: `GITHUB_TOKEN=ghp_deintoken`
 
 ---
 
