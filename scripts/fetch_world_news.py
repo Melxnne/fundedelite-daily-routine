@@ -29,6 +29,9 @@ RSS_FEEDS = [
     {"name": "Reuters World",    "url": "https://feeds.reuters.com/reuters/worldNews"},
     {"name": "BBC Business",     "url": "https://feeds.bbci.co.uk/news/business/rss.xml"},
     {"name": "Investing Gold",   "url": "https://www.investing.com/rss/news_25.rss"},
+    # Additional sources (redundancy for when Reuters 502s via proxy tunnel)
+    {"name": "AP Business",     "url": "https://feeds.apnews.com/rss/apf-business"},
+    {"name": "Al Jazeera",      "url": "https://www.aljazeera.com/xml/rss/all.xml"},
 ]
 
 # Schlagwörter → Marktrelevanz-Kategorie

@@ -16,22 +16,22 @@ export YF_DISABLE_CURL_CFFI=1      # Verhindert TLS-Fehler via curl_cffi/Proxy
 export REQUESTS_CA_BUNDLE=""       # Fallback-CA-Bundle deaktivieren wenn nötig
 ```
 
-**GitHub-Push-Vorbereitung:** Falls `GITHUB_TOKEN` als Umgebungsvariable gesetzt ist,
-konfiguriere den Remote einmalig mit Token-Auth:
-```bash
-git remote set-url origin "https://${GITHUB_TOKEN}@github.com/Melxnne/fundedelite-daily-routine.git"
-```
-Ohne `GITHUB_TOKEN` ist Push nicht möglich – Report wird dennoch lokal committed, und der
-fehlgeschlagene Push wird im Report unter "Technischer Hinweis" dokumentiert.
+**GitHub-Push:** Wird über `push_report.ps1` abgewickelt (liest GITHUB_TOKEN aus `.env`).
+Einmalig einrichten: https://github.com/settings/tokens → Classic PAT mit `repo`-Scope → in `.env` eintragen.
 
 ---
 
-## 1. Daten holen (alle drei parallel starten)
+## 1. Daten holen (alle drei parallel starten, dann Analyse)
 
 ```bash
 python scripts/fetch_market_data.py        # Gold + US500, 5m + 1h via Yahoo Finance
 python scripts/fetch_economic_calendar.py  # ForexFactory High-Impact Events (24h)
-python scripts/fetch_world_news.py         # RSS World-News (Reuters, BBC)
+python scripts/fetch_world_news.py         # RSS World-News (Reuters, BBC, AP, Al Jazeera)
+```
+
+Nach Abschluss der Fetch-Scripts:
+```bash
+python scripts/analyze_market_data.py      # FVGs + Equal Highs/Lows berechnen
 ```
 
 Falls ein Script fehlschlägt: Fehler im Report benennen, restliche Analyse mit
@@ -41,10 +41,11 @@ verfügbaren Daten trotzdem ausführen.
 
 ## 2. Daten lesen
 
-Lies alle drei erzeugten JSON-Dateien aus `data/raw/` für das heutige Datum:
+Lies alle vier erzeugten JSON-Dateien aus `data/raw/` für das heutige Datum:
 - `market_data_<YYYY-MM-DD>.json`
 - `economic_calendar_<YYYY-MM-DD>.json`
 - `world_news_<YYYY-MM-DD>.json`
+- `analysis_<YYYY-MM-DD>.json` ← vorberechnete FVGs + Equal Highs/Lows
 
 Lies außerdem:
 - `rulebook/silver_bullet_rulebook.md` (Confluence-Faktoren)
@@ -85,9 +86,14 @@ Für beide Symbole:
 - Ehrliche Einschätzung: Ist die Struktur eindeutig oder mehrdeutig?
 
 ### 5. FVGs und Equal Highs/Lows (5m, letzte ~120 Kerzen)
+Lies die Daten aus `analysis_<YYYY-MM-DD>.json` (vorberechnet durch `analyze_market_data.py`).
 Für beide Symbole:
 - Top-5 FVGs nach Größe, mit Zeitstempel, Typ (bullish/bearish), Top/Bottom/Size
-- Equal Highs und Equal Lows (Toleranz 0.05%): aktuelle Liquiditätszonen
+  - Bullish FVG = Gap nach oben (Low der Folgekerze > High der Vorkerze)
+  - Bearish FVG = Gap nach unten (High der Folgekerze < Low der Vorkerze)
+- Equal Highs (über aktuellem Preis = sell-side Liquidität)
+- Equal Lows (unter aktuellem Preis = buy-side Liquidität)
+- Toleranz 0.05%; mindestens 2 Touches für EQH/EQL
 
 ### 6. DXY-Kontext (manuell)
 Da kein DXY-Script vorhanden: kurze Einschätzung auf Basis der Wochennachrichten
@@ -157,32 +163,31 @@ als nächster Eintrag aufgenommen, sobald ein Vorschlag ≥2x erscheint.
 
 ---
 
-## 4. Commit und Push
+## 4. Commit und Push (Windows PowerShell)
 
-```bash
-# Report committen
+```powershell
+# Report committen (falls noch nicht committed)
 git add reports/report_<YYYY-MM-DD>.md
 git commit -m "report: daily market analysis <YYYY-MM-DD>"
 
-# Push auf Branch mit Präfix claude/
-BRANCH="claude/report-<YYYY-MM-DD>"
-git checkout -b "$BRANCH"
-git push -u origin "$BRANCH"
+# Push via Helper-Script (liest GITHUB_TOKEN aus .env)
+.\push_report.ps1 -Date <YYYY-MM-DD>
 ```
 
-Falls Push fehlschlägt (kein `GITHUB_TOKEN` oder 403):
+Das Script `push_report.ps1`:
+- Liest `GITHUB_TOKEN` aus `.env`
+- Erstellt Branch `claude/report-<YYYY-MM-DD>` und pusht
+- Gibt den PR-Link direkt aus
+- Setzt den Remote nach dem Push wieder auf die öffentliche HTTPS-URL zurück
+
+Falls Push fehlschlägt (kein oder ungültiger GITHUB_TOKEN):
 - Im Report unter Sektion 0 dokumentieren
 - Commit bleibt lokal erhalten
-- Kein PR öffnen ohne erfolgreichen Push
 
-Falls Push erfolgreich:
-```bash
-gh pr create \
-  --title "Daily Analysis <YYYY-MM-DD>" \
-  --body "Automatisch generierter Report. Setup-Score und World-News-Status im Report." \
-  --base master \
-  --head "$BRANCH"
-```
+GITHUB_TOKEN einrichten (einmalig):
+1. https://github.com/settings/tokens → "Generate new token (classic)"
+2. Scope: `repo`
+3. In `.env` eintragen: `GITHUB_TOKEN=ghp_deintoken`
 
 ---
 
