@@ -74,11 +74,11 @@ denselben Vorschlag macht, ist das ein Signal, die Änderung tatsächlich einzub
 | 2026-06-25 | Kein World-News-Context | RSS-Script `fetch_world_news.py` erstellen | ✅ Umgesetzt |
 | 2026-06-25 | Push 403 (kein Token) | `GITHUB_TOKEN` in Routine-Env + Remote-URL-Patch | ✅ Umgesetzt |
 | 2026-06-25 | Nur ForexFactory-Kalender, keine Weltnachrichten | Extended Analysis Framework | ✅ Umgesetzt |
-| 2026-06-26 | `matched_keywords` leer – Gate-Signal unzuverlässig | Keyword-Matching-Bug in `fetch_world_news.py` beheben | 1x – offen |
-| 2026-06-26 | Reuters/AP via Proxy nicht erreichbar | Alternative Feeds (Guardian, AP Atom) als Fallback einrichten | 1x – offen |
-| 2026-06-26 | JSON-Key `fvgs_top5` vs. Log "5 FVGs" – inkonsistent | Key zu `fvgs` umbenennen oder Log anpassen | 1x – offen |
-| 2026-06-26 | Faktor 4 (OB) und Faktor 5 (MSS) nicht automatisch berechenbar | OB- und Swing-Break-Erkennung in `analyze_market_data.py` ergänzen | 1x – offen |
-| 2026-06-26 | Wochentags-Flag fehlt im Report | Freitag-Hinweis als automatischen Flag implementieren (D.2) | 1x – offen |
+| 2026-06-28 | Reuters/AP Feeds via Proxy nicht erreichbar (502) | Alternative Feeds: MarketWatch RSS, CNBC RSS, Benzinga als Fallback | ⏳ Offen |
+| 2026-06-28 | Gold-Keyword-Filter tagged irrelevante Artikel (false positives) | Keyword-Matching auf "gold price"/"XAU"/"bullion" verfeinern | ⏳ Offen |
+| 2026-06-28 | Kein automatischer Order-Block-Check (Faktor 4 immer ⚠️) | OB-Erkennung in `analyze_market_data.py` implementieren | ⏳ Offen |
+| 2026-06-28 | Kein automatischer MSS-Check auf 5m (Faktor 5 immer ⚠️) | MSS-Erkennung nach Swing-Sweep in Analyse-Script integrieren | ⏳ Offen |
+| 2026-06-28 | Wochentag-Kontext fehlt im Report | Wochentags-Annotation prominent einbauen (D.2 Wochentags-Filter) | ⏳ Offen |
 
 ---
 
