@@ -74,6 +74,11 @@ denselben Vorschlag macht, ist das ein Signal, die Änderung tatsächlich einzub
 | 2026-06-25 | Kein World-News-Context | RSS-Script `fetch_world_news.py` erstellen | ✅ Umgesetzt |
 | 2026-06-25 | Push 403 (kein Token) | `GITHUB_TOKEN` in Routine-Env + Remote-URL-Patch | ✅ Umgesetzt |
 | 2026-06-25 | Nur ForexFactory-Kalender, keine Weltnachrichten | Extended Analysis Framework | ✅ Umgesetzt |
+| 2026-06-28 | Reuters/AP Feeds via Proxy nicht erreichbar (502) | Alternative Feeds: MarketWatch RSS, CNBC RSS, Benzinga als Fallback | ⏳ Offen |
+| 2026-06-28 | Gold-Keyword-Filter tagged irrelevante Artikel (false positives) | Keyword-Matching auf "gold price"/"XAU"/"bullion" verfeinern | ⏳ Offen |
+| 2026-06-28 | Kein automatischer Order-Block-Check (Faktor 4 immer ⚠️) | OB-Erkennung in `analyze_market_data.py` implementieren | ⏳ Offen |
+| 2026-06-28 | Kein automatischer MSS-Check auf 5m (Faktor 5 immer ⚠️) | MSS-Erkennung nach Swing-Sweep in Analyse-Script integrieren | ⏳ Offen |
+| 2026-06-28 | Wochentag-Kontext fehlt im Report | Wochentags-Annotation prominent einbauen (D.2 Wochentags-Filter) | ⏳ Offen |
 
 ---
 
