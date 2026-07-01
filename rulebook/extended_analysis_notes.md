@@ -79,6 +79,10 @@ denselben Vorschlag macht, ist das ein Signal, die Änderung tatsächlich einzub
 | 2026-06-28 | Kein automatischer Order-Block-Check (Faktor 4 immer ⚠️) | OB-Erkennung in `analyze_market_data.py` implementieren | ⏳ Offen |
 | 2026-06-28 | Kein automatischer MSS-Check auf 5m (Faktor 5 immer ⚠️) | MSS-Erkennung nach Swing-Sweep in Analyse-Script integrieren | ⏳ Offen |
 | 2026-06-28 | Wochentag-Kontext fehlt im Report | Wochentags-Annotation prominent einbauen (D.2 Wochentags-Filter) | ⏳ Offen |
+| 2026-06-29 | Reuters/AP Feeds via Proxy nicht erreichbar (502) – 2. Auftreten | **Einbau-Signal:** MarketWatch/CNBC RSS als Fallback in `fetch_world_news.py` einbauen | 🔴 Fällig |
+| 2026-06-29 | Gold-Keyword-Filter tagged irrelevante Artikel (false positives) – 2. Auftreten | **Einbau-Signal:** Pflicht-Keyword "gold price"\|"XAU"\|"bullion" statt einzelnem "gold" | 🔴 Fällig |
+| 2026-06-29 | Wochentags-Annotation (D.2) | ✅ Heute erstmals im Report eingebaut (Montag-Hinweis prominent) | ✅ Umgesetzt |
+| 2026-06-29 | Faktor-2-Sweep-Definition unklar (wie viel Wick reicht?) | Rulebook: Sweep gilt wenn Candle-Wick ≥ EQH/EQL-Level UND Close darunter/darüber | ⏳ Offen |
 
 ---
 
