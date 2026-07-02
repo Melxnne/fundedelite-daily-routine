@@ -83,6 +83,15 @@ denselben Vorschlag macht, ist das ein Signal, die Änderung tatsächlich einzub
 | 2026-06-29 | Gold-Keyword-Filter tagged irrelevante Artikel (false positives) – 2. Auftreten | **Einbau-Signal:** Pflicht-Keyword "gold price"\|"XAU"\|"bullion" statt einzelnem "gold" | 🔴 Fällig |
 | 2026-06-29 | Wochentags-Annotation (D.2) | ✅ Heute erstmals im Report eingebaut (Montag-Hinweis prominent) | ✅ Umgesetzt |
 | 2026-06-29 | Faktor-2-Sweep-Definition unklar (wie viel Wick reicht?) | Rulebook: Sweep gilt wenn Candle-Wick ≥ EQH/EQL-Level UND Close darunter/darüber | ⏳ Offen |
+| 2026-06-30 | Reuters/AP Feeds via Proxy (502) – 3. Auftreten | Alternative Feeds (MarketWatch/CNBC/Benzinga) integrieren | 🔴 Fällig |
+| 2026-06-30 | Gold false-positive Keyword-Tags – 2. Auftreten | Keyword auf "gold price"/"XAU"/"bullion" verfeinern | 🔴 Fällig |
+| 2026-06-30 | OB-Erkennung fehlt (Faktor 4) – 3. Auftreten | OB in `analyze_market_data.py` implementieren | 🔴 Fällig |
+| 2026-06-30 | MSS-Erkennung fehlt (Faktor 5) – 3. Auftreten | MSS-Flag nach Sweep in Analyse-Script | 🔴 Fällig |
+| 2026-07-02 | Reuters/AP Feeds via Proxy (502) – 4. Auftreten; trotz "Fällig"-Markierung am 30.06. weiterhin keine Code-Änderung an `fetch_world_news.py` | Fallback-Feeds tatsächlich implementieren, nicht nur erneut protokollieren | 🔴 **Überfällig** |
+| 2026-07-02 | Gold-Keyword-Filter false positives – 4. Auftreten; weiterhin unverändertes `GOLD_KEYWORDS`-Set | Keyword-Set tatsächlich verfeinern | 🔴 **Überfällig** |
+| 2026-07-02 | OB/MSS-Erkennung (Faktoren 4+5) – 4. Auftreten; `analyze_market_data.py` weiterhin ohne OB/MSS-Logik | Tatsächlich implementieren und in `analysis_*.json` ausgeben | 🔴 **Überfällig** |
+| 2026-07-02 | Gold und US500 zeigen synchrones LL→HH→HL-Strukturmuster im selben Zeitfenster (vermutlich NFP-Spike-getrieben, 01. Juli 13:00–14:00 UTC) | Relative-Strength/Korrelations-Check (D.1) umsetzen | ⏳ Offen (1. Auftreten) |
+| 2026-07-02 | FVG-Überlappung (bullish/bearish gleichzeitig offen) nicht automatisch gekennzeichnet | "Battle-Zone"-Flag in `analyze_market_data.py` ergänzen | ⏳ Offen (1. Auftreten) |
 
 ---
 
