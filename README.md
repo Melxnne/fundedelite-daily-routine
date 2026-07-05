@@ -49,7 +49,9 @@ in `.env.example` funktionieren ohne Anpassung.
 4. **Environment Variables in der Routine:**
    - `YF_DISABLE_CURL_CFFI=1` — verhindert TLS-Fehler via curl_cffi/Proxy (Pflicht)
    - `GITHUB_TOKEN=<dein-PAT>` — Classic PAT mit `repo`-Scope für Push-Rechte
-5. Branch-Safety bleibt auf Default (`claude/`-Präfix) - Reports landen als PR.
+5. Branch-Safety ist bewusst deaktiviert: die Routine pusht Reports automatisch direkt auf
+   `master`, kein `claude/`-Feature-Branch, kein PR-Umweg. Siehe `.claude/routines/
+   daily-market-analysis-routine.md` Abschnitt 4.
 
 ### GitHub PAT erstellen (für Push-Rechte)
 1. https://github.com/settings/tokens -> Generate new token (classic)

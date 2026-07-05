@@ -163,31 +163,39 @@ als nächster Eintrag aufgenommen, sobald ein Vorschlag ≥2x erscheint.
 
 ---
 
-## 4. Commit und Push
+## 4. Commit und Push (direkt auf master, kein PR-Umweg)
 
 ```bash
+# Auf master wechseln und aktuellen Stand holen
+git fetch origin master
+git checkout master
+git pull origin master
+
 # Report committen (falls noch nicht committed)
 git add reports/report_<YYYY-MM-DD>.md
 git commit -m "report: daily market analysis <YYYY-MM-DD>"
 
-# Push mit GITHUB_TOKEN (in Cloud-Env-Vars gesetzt, lokal in .env)
-BRANCH="claude/report-<YYYY-MM-DD>"
+# Push mit GITHUB_TOKEN (in Cloud-Env-Vars gesetzt, lokal in .env) direkt auf master
 git remote set-url origin "https://${GITHUB_TOKEN}@github.com/Melxnne/fundedelite-daily-routine.git"
-git checkout -b "$BRANCH" 2>/dev/null || git checkout "$BRANCH"
-git push -u origin "$BRANCH"
+git push origin master
 # Remote wieder sauber setzen (Token raus aus der URL)
 git remote set-url origin "https://github.com/Melxnne/fundedelite-daily-routine.git"
-echo "PR: https://github.com/Melxnne/fundedelite-daily-routine/compare/$BRANCH"
+echo "Report auf master gepusht: https://github.com/Melxnne/fundedelite-daily-routine/blob/master/reports/report_<YYYY-MM-DD>.md"
 ```
+
+**Kein Feature-Branch, kein PR:** Die Routine pusht den Report jeden Tag automatisch direkt
+auf `master`. Kein manueller Merge-Schritt nötig.
 
 **Lokal (Windows):** statt obigem Bash-Block das Script verwenden:
 ```powershell
 .\push_report.ps1 -Date <YYYY-MM-DD>
 ```
 
-Falls Push fehlschlägt (kein oder ungültiger GITHUB_TOKEN):
+Falls Push fehlschlägt (kein/ungültiger GITHUB_TOKEN, oder `master` hat zwischenzeitlich neue
+Commits die einen Konflikt verursachen):
 - Im Report unter Sektion 0 dokumentieren
-- Commit bleibt lokal erhalten
+- Bei Konflikt: `git pull --rebase origin master` versuchen, dann erneut pushen
+- Commit bleibt in jedem Fall lokal erhalten
 
 ---
 
