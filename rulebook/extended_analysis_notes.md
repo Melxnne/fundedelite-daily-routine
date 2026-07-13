@@ -92,6 +92,12 @@ denselben Vorschlag macht, ist das ein Signal, die Änderung tatsächlich einzub
 | 2026-07-02 | OB/MSS-Erkennung (Faktoren 4+5) – 4. Auftreten; `analyze_market_data.py` weiterhin ohne OB/MSS-Logik | Tatsächlich implementieren und in `analysis_*.json` ausgeben | 🔴 **Überfällig** |
 | 2026-07-02 | Gold und US500 zeigen synchrones LL→HH→HL-Strukturmuster im selben Zeitfenster (vermutlich NFP-Spike-getrieben, 01. Juli 13:00–14:00 UTC) | Relative-Strength/Korrelations-Check (D.1) umsetzen | ⏳ Offen (1. Auftreten) |
 | 2026-07-02 | FVG-Überlappung (bullish/bearish gleichzeitig offen) nicht automatisch gekennzeichnet | "Battle-Zone"-Flag in `analyze_market_data.py` ergänzen | ⏳ Offen (1. Auftreten) |
+| 2026-07-13 | Reuters/AP Feeds via Proxy (502) – 6. Auftreten | Fallback-Feeds implementiert (MarketWatch + CNBC), heute live verifiziert (+40 Artikel) | ✅ **Umgesetzt** |
+| 2026-07-13 | Gold-Keyword-Filter false positives — root cause war naives Substring-Matching ohne Wortgrenzen ("war" matchte in "warns", "ppi" in "shopping") – 6. Auftreten | Wortgrenzen-Regex mit optionalem Plural-Suffix implementiert; bare "gold"/"silver" durch spezifische Phrasen ("gold price", "XAU", "bullion", ...) ersetzt | ✅ **Umgesetzt** |
+| 2026-07-13 | OB/MSS-Erkennung (Faktoren 4+5) – 6. Auftreten | In `analyze_market_data.py` implementiert: Order-Block-Proxy pro FVG + fraktaler Swing-Detector mit automatischem MSS-Check (`bullish_mss`/`bearish_mss`), Felder in `analysis_*.json` ausgegeben | ✅ **Umgesetzt** |
+| 2026-07-13 | Firmennamen-Keywords (z.B. "apple") matchen auch auf Alltagswörter/Spitznamen ("Big Apple" = NYC) | Kontext-Anforderung (Ticker/"Inc"/Earnings-Bezug) für Firmennamen-Keywords ergänzen | ⏳ Offen (1. Auftreten) |
+| 2026-07-13 | Gold und US500 zeigen heute eine echte Divergenz (Gold bearish, US500 bullish) statt Gleichlauf wie am 02.07. | Relative-Strength/Korrelations-Check (D.1) umsetzen – jetzt mit einem synchronen und einem divergenten Beispiel besonders aufschlussreich | ⏳ Offen (2. Auftreten, andere Ausprägung) |
+| 2026-07-13 | Faktor-1-Bewertung bei "Regimewechsel im Gange" (2 von 3 Swings bestätigt) nicht explizit im Rulebook geregelt | Rulebook um explizite Regel ergänzen: 2/3 gleichgerichtete Swings nach Regimewechsel = ⚠️, nicht ✅ | ⏳ Offen (2. Auftreten, seit 02.07.) |
 
 ---
 

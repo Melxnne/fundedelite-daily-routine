@@ -49,6 +49,16 @@ def find_fvgs(candles: list[dict], max_results: int = 5) -> list[dict]:
         curr = candles[i]
         nxt  = candles[i + 1]
 
+        # Order-Block-Proxy (Rulebook Faktor 4): die Kerze vor dem Impuls, der
+        # die FVG erzeugt hat (= `prev`), gilt als OB-Körper.
+        order_block = {
+            "time_utc": prev["time_utc"],
+            "open":     prev["open"],
+            "high":     prev["high"],
+            "low":      prev["low"],
+            "close":    prev["close"],
+        }
+
         # Bullish FVG: Gap nach oben — Low der rechten Kerze > High der linken Kerze
         if nxt["low"] > prev["high"]:
             top    = nxt["low"]
@@ -63,6 +73,7 @@ def find_fvgs(candles: list[dict], max_results: int = 5) -> list[dict]:
                 "bottom":     round(bottom, 4),
                 "size":       round(size, 4),
                 "open":       is_open,
+                "order_block": order_block,
             })
 
         # Bearish FVG: Gap nach unten — High der rechten Kerze < Low der linken Kerze
@@ -79,6 +90,7 @@ def find_fvgs(candles: list[dict], max_results: int = 5) -> list[dict]:
                 "bottom":     round(bottom, 4),
                 "size":       round(size, 4),
                 "open":       is_open,
+                "order_block": order_block,
             })
 
     # Nur offene, sortiert nach Größe
@@ -143,12 +155,75 @@ def find_equal_highs_lows(
     }
 
 
+def find_swings(candles: list[dict], width: int = 3) -> list[dict]:
+    """Fraktale Swing-Punkte: Kerze i ist Swing-High/-Low wenn ihr High/Low
+    strikt über/unter allen `width` Kerzen davor UND danach liegt.
+    Die letzten `width` Kerzen können naturgemäß noch keinen bestätigten
+    Swing bilden (fehlende rechte Seite des Fraktals) — das ist beabsichtigt,
+    damit MSS-Checks genau diese unbestätigten Kerzen gegen den letzten
+    bestätigten Swing prüfen können.
+    """
+    swings: list[dict] = []
+    n = len(candles)
+    for i in range(width, n - width):
+        window_highs = [candles[j]["high"] for j in range(i - width, i + width + 1)]
+        window_lows  = [candles[j]["low"]  for j in range(i - width, i + width + 1)]
+        if candles[i]["high"] == max(window_highs) and window_highs.count(candles[i]["high"]) == 1:
+            swings.append({"time_utc": candles[i]["time_utc"], "type": "high", "price": candles[i]["high"]})
+        if candles[i]["low"] == min(window_lows) and window_lows.count(candles[i]["low"]) == 1:
+            swings.append({"time_utc": candles[i]["time_utc"], "type": "low", "price": candles[i]["low"]})
+    swings.sort(key=lambda s: s["time_utc"])
+    return swings
+
+
+def detect_mss(candles: list[dict], swings: list[dict]) -> dict:
+    """Market Structure Shift (Rulebook Faktor 5): schließt eine spätere Kerze
+    auf Schlussbasis über dem letzten bestätigten Swing-High (bullish) bzw.
+    unter dem letzten bestätigten Swing-Low (bearish)?
+    """
+    highs = [s for s in swings if s["type"] == "high"]
+    lows  = [s for s in swings if s["type"] == "low"]
+    result = {"bullish_mss": None, "bearish_mss": None}
+
+    if highs:
+        last_high = highs[-1]
+        for c in candles:
+            if c["time_utc"] <= last_high["time_utc"]:
+                continue
+            if c["close"] > last_high["price"]:
+                result["bullish_mss"] = {
+                    "broke_swing_high": last_high["price"],
+                    "swing_time_utc":   last_high["time_utc"],
+                    "break_time_utc":   c["time_utc"],
+                    "break_close":      c["close"],
+                }
+                break
+
+    if lows:
+        last_low = lows[-1]
+        for c in candles:
+            if c["time_utc"] <= last_low["time_utc"]:
+                continue
+            if c["close"] < last_low["price"]:
+                result["bearish_mss"] = {
+                    "broke_swing_low":  last_low["price"],
+                    "swing_time_utc":   last_low["time_utc"],
+                    "break_time_utc":   c["time_utc"],
+                    "break_close":      c["close"],
+                }
+                break
+
+    return result
+
+
 def analyze_symbol(symbol_data: dict) -> dict:
     candles_5m = symbol_data.get("intraday_5m", [])
     lookback   = candles_5m[-120:] if len(candles_5m) >= 120 else candles_5m
 
     fvgs   = find_fvgs(lookback)
     eqhl   = find_equal_highs_lows(candles_5m)
+    swings = find_swings(lookback)
+    mss    = detect_mss(lookback, swings)
 
     return {
         "symbol":       symbol_data["symbol"],
@@ -156,6 +231,7 @@ def analyze_symbol(symbol_data: dict) -> dict:
         "equal_highs":  eqhl["equal_highs"],
         "equal_lows":   eqhl["equal_lows"],
         "current_price": round(candles_5m[-1]["close"], 4) if candles_5m else None,
+        "mss":          mss,
     }
 
 

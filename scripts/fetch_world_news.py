@@ -32,14 +32,26 @@ RSS_FEEDS = [
     # Additional sources (redundancy for when Reuters 502s via proxy tunnel)
     {"name": "AP Business",     "url": "https://feeds.apnews.com/rss/apf-business"},
     {"name": "Al Jazeera",      "url": "https://www.aljazeera.com/xml/rss/all.xml"},
+    # Fallback-Feeds: Reuters/AP werden über den Proxy wiederholt mit 502 (Tunnel-Fehler)
+    # blockiert (seit 26. Juni mehrfach dokumentiert, siehe extended_analysis_notes.md).
+    # MarketWatch/CNBC laufen über denselben Proxy zuverlässig durch.
+    {"name": "MarketWatch",     "url": "https://feeds.content.dowjones.io/public/rss/mw_topstories"},
+    {"name": "CNBC",            "url": "https://www.cnbc.com/id/100003114/device/rss/rss.html"},
 ]
 
 # Schlagwörter → Marktrelevanz-Kategorie
+# Hinweis: Matching erfolgt mit Wortgrenzen (siehe _compile_keyword_pattern), nicht als
+# naiver Substring-Check. Frühere Version matchte z.B. "war" in "warns" und "ppi" in
+# "shopping", was zu False Positives führte (mehrfach dokumentiert in
+# extended_analysis_notes.md). Bare "gold"/"silver" wurden durch spezifischere Phrasen
+# ersetzt, da sie sonst auch metaphorische Verwendungen treffen (z.B. "blue gold" für
+# Agavenschnaps).
 GOLD_KEYWORDS = {
     "war", "attack", "strike", "invasion", "sanction", "military", "missile", "missiles",
-    "federal reserve", "fed ", "rate hike", "rate cut", "interest rate", "inflation",
+    "federal reserve", "fed", "rate hike", "rate cut", "interest rate", "inflation",
     "cpi", "ppi", "core inflation", "dollar", "dxy", "usd", "treasury", "yield",
-    "gold", "silver", "opec", "oil", "crude", "bullion", "safe haven",
+    "gold price", "gold prices", "gold futures", "spot gold", "xau", "silver price",
+    "opec", "oil", "crude", "bullion", "safe haven",
     "recession", "default", "banking crisis", "collapse", "crisis", "geopolit",
     "ukraine", "russia", "iran", "middle east", "china tariff",
 }
@@ -77,12 +89,30 @@ def _fetch_rss(url: str, name: str) -> list[dict]:
     return items
 
 
+def _compile_keyword_pattern(keywords: set[str]) -> re.Pattern:
+    """Baut ein Wortgrenzen-Pattern statt naivem Substring-Match.
+
+    `\\b` allein reicht nicht für Phrasen mit Sonderzeichen wie "s&p", daher
+    Lookaround auf Nicht-Alphanumerisch davor/danach.
+    """
+    # Optionales "s"/"es"-Suffix erlaubt Pluralformen (z.B. "strikes", "sanctions"),
+    # ohne die Wortgrenzen-Prüfung selbst aufzuweichen.
+    alt = "|".join(
+        re.escape(kw) + r"(?:es|s)?" for kw in sorted(keywords, key=len, reverse=True)
+    )
+    return re.compile(rf"(?<![a-z0-9])(?:{alt})(?![a-z0-9])", re.IGNORECASE)
+
+
+GOLD_PATTERN = _compile_keyword_pattern(GOLD_KEYWORDS)
+EQUITY_PATTERN = _compile_keyword_pattern(EQUITY_KEYWORDS)
+
+
 def _classify(title: str, desc: str) -> list[str]:
     text = (title + " " + desc).lower()
     tags = []
-    if any(kw in text for kw in GOLD_KEYWORDS):
+    if GOLD_PATTERN.search(text):
         tags.append("GOLD")
-    if any(kw in text for kw in EQUITY_KEYWORDS):
+    if EQUITY_PATTERN.search(text):
         tags.append("EQUITY")
     return tags
 
