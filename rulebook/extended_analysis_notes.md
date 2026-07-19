@@ -92,6 +92,10 @@ denselben Vorschlag macht, ist das ein Signal, die Änderung tatsächlich einzub
 | 2026-07-02 | OB/MSS-Erkennung (Faktoren 4+5) – 4. Auftreten; `analyze_market_data.py` weiterhin ohne OB/MSS-Logik | Tatsächlich implementieren und in `analysis_*.json` ausgeben | 🔴 **Überfällig** |
 | 2026-07-02 | Gold und US500 zeigen synchrones LL→HH→HL-Strukturmuster im selben Zeitfenster (vermutlich NFP-Spike-getrieben, 01. Juli 13:00–14:00 UTC) | Relative-Strength/Korrelations-Check (D.1) umsetzen | ⏳ Offen (1. Auftreten) |
 | 2026-07-02 | FVG-Überlappung (bullish/bearish gleichzeitig offen) nicht automatisch gekennzeichnet | "Battle-Zone"-Flag in `analyze_market_data.py` ergänzen | ⏳ Offen (1. Auftreten) |
+| 2026-07-17 | Reuters/AP Feeds via Proxy (502) – 8. Auftreten; weiterhin kein Fallback implementiert | Fallback-Feeds (MarketWatch/CNBC/Benzinga) tatsächlich implementieren | 🔴 **Überfällig** |
+| 2026-07-19 | Reuters/AP Feeds via Proxy (502) – mind. 9. Auftreten; weiterhin kein Code-Fix | Fallback-Feeds tatsächlich implementieren, nicht nur erneut protokollieren | 🔴 **Überfällig** |
+| 2026-07-19 | Gold-Keyword-Filter false positives – mind. 5. Auftreten seit 02. Juli ("Überfällig"); heute konkret belegt: "Golden Boot"/"golden boy" matcht "gold", "WARN notice" matcht "war" als Teilstring | `\bgold\b`/`\bwar\b`-Wortgrenzen statt Teilstring-Match; "gold" zusätzlich auf "gold price"/"XAU"/"bullion" verschärfen | 🔴 **Überfällig** |
+| 2026-07-19 | Sweep/MSS-Faktoren (2/5) ohne klare Zeitgrenze bei Wochenend-Reports – Freitagnachmittags-Sweep war beim Sonntag-Fetch bereits >12h alt, Rulebook macht keine Aussage ob das noch zählt | Explizite Zeitgrenze im Rulebook ergänzen (z.B. Sweep+MSS älter als X Stunden zählt nicht mehr als erfüllt) | ⏳ Offen (1. Auftreten) |
 
 ---
 
