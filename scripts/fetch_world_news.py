@@ -32,6 +32,11 @@ RSS_FEEDS = [
     # Additional sources (redundancy for when Reuters 502s via proxy tunnel)
     {"name": "AP Business",     "url": "https://feeds.apnews.com/rss/apf-business"},
     {"name": "Al Jazeera",      "url": "https://www.aljazeera.com/xml/rss/all.xml"},
+    # Fallback feeds added 2026-07-25: Reuters/AP repeatedly 502 through the proxy tunnel
+    # (documented in rulebook/extended_analysis_notes.md since 06-28, "Ueberfaellig" since 07-02).
+    # These two verified reachable through the same proxy.
+    {"name": "MarketWatch Top Stories", "url": "https://feeds.content.dowjones.io/public/rss/mw_topstories"},
+    {"name": "Benzinga",         "url": "https://www.benzinga.com/feed"},
 ]
 
 # Schlagwörter → Marktrelevanz-Kategorie
