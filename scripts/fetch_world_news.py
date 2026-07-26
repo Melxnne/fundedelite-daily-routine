@@ -82,12 +82,23 @@ def _fetch_rss(url: str, name: str) -> list[dict]:
     return items
 
 
+def _compile_patterns(keywords: set[str]) -> list[re.Pattern]:
+    # \b-Wortgrenzen statt reinem Substring-Match: verhindert False Positives wie
+    # "war" in "rewards"/"aware" oder "fed" in "federal" (siehe extended_analysis_notes.md,
+    # wiederholt seit 2026-06-28 als False-Positive-Quelle dokumentiert).
+    return [re.compile(r"\b" + re.escape(kw.strip()) + r"\b") for kw in keywords]
+
+
+_GOLD_PATTERNS = _compile_patterns(GOLD_KEYWORDS)
+_EQUITY_PATTERNS = _compile_patterns(EQUITY_KEYWORDS)
+
+
 def _classify(title: str, desc: str) -> list[str]:
     text = (title + " " + desc).lower()
     tags = []
-    if any(kw in text for kw in GOLD_KEYWORDS):
+    if any(p.search(text) for p in _GOLD_PATTERNS):
         tags.append("GOLD")
-    if any(kw in text for kw in EQUITY_KEYWORDS):
+    if any(p.search(text) for p in _EQUITY_PATTERNS):
         tags.append("EQUITY")
     return tags
 
