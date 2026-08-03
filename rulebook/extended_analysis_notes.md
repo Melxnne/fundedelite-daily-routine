@@ -92,6 +92,10 @@ denselben Vorschlag macht, ist das ein Signal, die Änderung tatsächlich einzub
 | 2026-07-02 | OB/MSS-Erkennung (Faktoren 4+5) – 4. Auftreten; `analyze_market_data.py` weiterhin ohne OB/MSS-Logik | Tatsächlich implementieren und in `analysis_*.json` ausgeben | 🔴 **Überfällig** |
 | 2026-07-02 | Gold und US500 zeigen synchrones LL→HH→HL-Strukturmuster im selben Zeitfenster (vermutlich NFP-Spike-getrieben, 01. Juli 13:00–14:00 UTC) | Relative-Strength/Korrelations-Check (D.1) umsetzen | ⏳ Offen (1. Auftreten) |
 | 2026-07-02 | FVG-Überlappung (bullish/bearish gleichzeitig offen) nicht automatisch gekennzeichnet | "Battle-Zone"-Flag in `analyze_market_data.py` ergänzen | ⏳ Offen (1. Auftreten) |
+| 2026-08-03 | Gold-Keyword-Filter false positives (z.B. "BA mayday flight", "AI rogue bots" fälschlich als GOLD getaggt) – 6.+ Auftreten seit 28.06., weiterhin unverändertes `GOLD_KEYWORDS`-Set | Keyword-Set auf Phrasen ("gold price", "safe haven", "bullion") verengen oder pauschale Wörter ("crisis", "attack", "collapse") an einen zweiten Kontext-Treffer koppeln | 🔴 **Überfällig (6.+)** |
+| 2026-08-03 | OB/MSS-Erkennung (Faktoren 4+5) weiterhin nicht implementiert – 8.+ Auftreten seit 28.06., `analyze_market_data.py` unverändert ohne OB/MSS-Logik | Tatsächlich implementieren und in `analysis_*.json` ausgeben | 🔴 **Überfällig (8.+)** |
+| 2026-08-03 | `find_equal_highs_lows` erzeugt bei starkem Einweg-Trend stark unbalancierte Cluster-Zahlen (US500: 14 EQL vs. 1 EQH), viele davon niedrig-signifikant | Mindest-Preisabstand zwischen benachbarten EQH/EQL-Clustern ergänzen (z.B. ≥0.15 %) | ⏳ Offen (1. Auftreten) |
+| 2026-08-03 | Faktor 7 (Premium/Discount) methodisch unklar, wenn Report vor Abschluss der Tagesrange läuft (z.B. nur Asia-Session gehandelt) – Equilibrium-Berechnung dann nicht belastbar | Rulebook ergänzen: Faktor 7 bei unvollständiger Tagesrange grundsätzlich nur ⚠️, nie ✅ | ⏳ Offen (1. Auftreten) |
 
 ---
 
